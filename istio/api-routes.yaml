@@ -1,0 +1,51 @@
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: api-gateway
+spec:
+  destination:
+    name: api-gateway
+  match:
+    request:
+      headers:
+        uri:
+          prefix: /api/gateway
+  rewrite:
+    uri: /
+---
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: api-student
+spec:
+  destination:
+    name: student-service
+  match:
+    request:
+      headers:
+        uri:
+          prefix: /api/studentservice
+  rewrite:
+    uri: /
+---
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: api-registration
+spec:
+  destination:
+    name: registration-service
+  route:
+  - labels:
+      version: v20
+    weight: 50
+  - labels:
+      version: v30 
+    weight: 50   
+  match:
+    request:
+      headers:
+        uri:
+          prefix: /api/registerservice
+  rewrite:
+    uri: /

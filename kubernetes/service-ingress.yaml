@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    kubernetes.io/ingress.class: istio
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/gateway/.*
+        backend:
+          serviceName: api-gateway
+          servicePort: 8080
+      - path: /api/studentservice/.*
+        backend:
+          serviceName: student-service
+          servicePort: 8080
+      - path: /api/registerservice.*
+        backend:
+          serviceName: registration-service
+          servicePort: 8080

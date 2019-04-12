@@ -1,0 +1,42 @@
+version: '3.6'
+secrets:
+  app-credentials:
+    file: /Users/masudhasan/petclinic-service-account.json
+services:
+  student-service:
+    image: saturnism/gcp-spring-petclinic-customers-service
+    container_name: student-service
+    environment:
+    - PROJECT_ID
+    - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/petclinic-credentials
+    secrets:
+    - app-credentials
+    ports:
+    - 8081:8080
+
+  registration-service:
+    image: saturnism/gcp-spring-petclinic-customers-service
+    container_name: registration-service
+    environment:
+    - PROJECT_ID
+    - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/petclinic-credentials
+    secrets:
+    - app-credentials
+    ports:
+    - 8082:8080
+  
+  api-gateway:
+    image: saturnism/gcp-spring-petclinic-api-gateway
+    container_name: api-gateway
+    links:
+     - student-service
+     - registration-service
+    environment:
+    - PROJECT_ID
+    - GOOGLE_APPLICATION_CREDENTIALS=/run/secrets/petclinic-credentials
+    secrets:
+    - app-credentials
+    ports:
+    - 8080:8080
+
+  

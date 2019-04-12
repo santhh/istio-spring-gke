@@ -1,0 +1,103 @@
+# Copyright 2017 Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+##################################################################################################
+# registration service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: registration-service
+  labels:
+    app: registration-service
+    visualize: 'true'
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: registration-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: registration-service
+    visualize: 'true'
+  name: registration-deployment-v20
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registration-service
+      visualize: 'true'
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '8080'
+      labels:
+        app: registration-service
+        version: v20
+        visualize: 'true'
+    spec:
+      containers:
+      - name: registration-api
+        image: gcr.io/cnc-app-dev-1/swarm/gcp-istio-registration-service:v20
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: gcp,production
+    
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: registration-service
+    visualize: 'true'
+  name: registration-deployment-v30
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registration-service
+      visualize: 'true'
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '8080'
+      labels:
+        app: registration-service
+        version: v30
+        visualize: 'true'
+    spec:
+      containers:
+      - name: registration-api
+        image: gcr.io/cnc-app-dev-1/swarm/gcp-istio-registration-service:v30
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: gcp,production
+
+
+
